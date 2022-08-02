@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  database:
+    container_name: database
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=comment
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/postgresql/data
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      - PGADMIN_EMAIL_DEFAULT=nazlee41@gmail.com
+      - PGADMIN_PASSWORD_DEFAULT=root
+    ports:
+      - 8081:80
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+volumes:
+  data:
+  pgadmin:
