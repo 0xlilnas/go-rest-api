@@ -10,7 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/0xlilnas/go-rest-api/database"
 	"github.com/0xlilnas/go-rest-api/handler"
+	"github.com/0xlilnas/go-rest-api/initializer"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,6 +26,13 @@ func (app *App) Run() error {
 	fmt.Println("Setting up our app")
 	gin.SetMode(gin.ReleaseMode)
 
+	//load data from env
+	initializer.Init()
+
+	//connecting to database
+	database.NewDatabase()
+
+	//router setup
 	router := gin.Default()
 
 	handler.SetupRoutes(&handler.Config{
@@ -49,9 +58,9 @@ func (app *App) Run() error {
 	log.Println("Shutdown Server ...")
 
 	// setup withTimeout to preserve connection before close
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	c, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := srv.Shutdown(c); err != nil {
 		log.Fatal("Server Shutdown: ", err)
 	}
 	log.Println("Server exiting")
