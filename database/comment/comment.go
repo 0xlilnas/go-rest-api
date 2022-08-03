@@ -37,21 +37,49 @@ func (s *Service) GetComment(ID uint) (Comment, error) {
 }
 
 func (s *Service) GetCommentsBySlug(slug string) ([]Comment, error) {
-	panic("not implemented") // TODO: Implement
+	var comments []Comment
+	if result := s.DB.Find(&comments).Where("slug = ?", slug); result.Error != nil {
+		return []Comment{}, result.Error
+	}
+
+	return comments, nil
 }
 
 func (s *Service) PostComment(comment Comment) (Comment, error) {
-	panic("not implemented") // TODO: Implement
+	if result := s.DB.Save(&comment); result.Error != nil {
+		return Comment{}, nil
+	}
+
+	return comment, nil
 }
 
 func (s *Service) UpdateComment(ID uint, newComment Comment) (Comment, error) {
-	panic("not implemented") // TODO: Implement
+	comment, err := s.GetComment(ID)
+	if err != nil {
+		return Comment{}, err
+	}
+
+	if result := s.DB.Model(&comment).Updates(newComment); result.Error != nil {
+		return Comment{}, result.Error
+	}
+
+	return comment, nil
+
 }
 
 func (s *Service) DeleteComment(ID uint) error {
-	panic("not implemented") // TODO: Implement
+	if result := s.DB.Delete(&Comment{}, ID); result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }
 
 func (s *Service) GetAllComments() ([]Comment, error) {
-	panic("not implemented") // TODO: Implement
+	var comments []Comment
+	if result := s.DB.Find(&comments); result.Error != nil {
+		return comments, result.Error
+	}
+
+	return comments, nil
 }
